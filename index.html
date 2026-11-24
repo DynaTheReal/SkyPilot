@@ -553,7 +553,7 @@ function buildCockpit(G){
  // main panel housing + knee panel
  const mp=new THREE.Group();mp.position.set(0,-0.6,-1.05);mp.rotation.x=-0.22;cg.add(mp);add(rbox(2.06,0.42,0.3,0.02),panelM,0,0,-0.16,0,0,0,mp);add(rbox(1.9,0.42,0.12,0.03),panelM,0,-0.43,-0.1,0.3,0,0,mp);
  // pedestal housing + MCDUs
- add(rbox(0.58,0.58,1.15,0.03),dark,0,-1.1,-0.2);
+ add(rbox(0.58,0.5,1.1,0.03),dark,0,-1.06,-0.2);
  for(const sx of [-0.4,0.4]){const md=new THREE.Mesh(new THREE.PlaneGeometry(0.18,0.2),new THREE.MeshStandardMaterial({color:0x050607,roughness:0.3,emissive:0x0d2a18,emissiveIntensity:0.8}));md.position.set(sx,-0.79,-0.78);md.rotation.x=-1.0;cg.add(md);add(rbox(0.22,0.24,0.03,0.01),dark,sx,-0.805,-0.775,-1.0);}
  // seats (F/O + captain)
  const seat=new THREE.Group();seat.position.set(0.55,0,0.55);cg.add(seat);
@@ -564,10 +564,10 @@ function buildCockpit(G){
  CK.light=new THREE.PointLight(0xffd7a0,0,4.5,2);CK.light.position.set(0,0.45,0.1);cg.add(CK.light);
  // ===== clickable panels =====
  const E=EYE.clone();
- const addP=(p,x,y,z,mode)=>{p.mesh.position.set(O.x+x,O.y+y,O.z+z);cockpit.add(p.mesh);if(mode==='ped')p.mesh.rotation.set(-1.22,0,0);else if(mode==='over')p.mesh.rotation.set(1.33,0,0);else if(mode==='main')p.mesh.rotation.set(-0.22,0,0);else{p.mesh.updateMatrixWorld(true);p.mesh.lookAt(E);}PANELS.push(p);return p;};
+ const addP=(p,x,y,z,mode)=>{p.mesh.position.set(O.x+x,O.y+y,O.z+z);cockpit.add(p.mesh);if(mode==='ped')p.mesh.rotation.set(-1.5,0,0);else if(mode==='over')p.mesh.rotation.set(1.33,0,0);else if(mode==='main')p.mesh.rotation.set(-0.22,0,0);else{p.mesh.updateMatrixWorld(true);p.mesh.lookAt(E);}PANELS.push(p);return p;};
  PANEL.main=addP(new CPanel(2000,340,2.0,0.34,drawMain,1/12,0.9),0,-0.6,-1.045,'main');
  PANEL.fcu=addP(new CPanel(1440,120,1.9,0.158,drawFCU,0.25,0.7),0,-0.255,-0.806);
- PANEL.ped=addP(new CPanel(512,1024,0.5,1.0,drawPed,0.2,0.55),0,-0.8,-0.2,'ped');
+ PANEL.ped=addP(new CPanel(512,1024,0.5,1.0,drawPed,0.2,0.65),0,-0.762,-0.2,'ped');
  PANEL.over=addP(new CPanel(1024,740,1.12,0.81,drawOver,0.25,0.55),0,0.548,-0.05,'over');
  PANEL.efb=addP(new CPanel(1024,720,0.36,0.25,drawEFB,0.5,1.0),-1.08,-0.36,-0.58);
  add(rbox(1.18,0.86,0.06,0.015),dark,0,0.59,-0.045,1.33);
@@ -591,7 +591,7 @@ function buildCockpit(G){
  CK.ign=child(PANEL.ped,Cy(0.028,0.032,0.02,20),M(0x2a2e33,0.5,0.3),256,750,0.01,Math.PI/2);{const pt=new THREE.Mesh(B(0.008,0.006,0.03),white);pt.position.set(0,0.012,-0.012);CK.ign.add(pt);}
  const L=(name,p,fov)=>{const d=p.clone().sub(EYE);LOOKS[name]={yaw:Math.atan2(-d.x,-d.z),pitch:Math.atan2(d.y,Math.hypot(d.x,d.z)),fov};};
  L('front',new V3(-0.55,1.45,-60),72);L('panel',PANEL.main.mesh.position.clone().add(new V3(-0.42,0,0)),46);L('over',PANEL.over.mesh.position.clone().add(new V3(0,0.05,0.18)),84);
- L('ped',PANEL.ped.mesh.position.clone().add(new V3(0,0,0.05)),60);L('efb',PANEL.efb.mesh.position.clone().add(new V3(0,-0.02,0)),18);
+ L('ped',PANEL.ped.mesh.position.clone().add(new V3(0,0,0.02)),68);L('efb',PANEL.efb.mesh.position.clone().add(new V3(0,-0.02,0)),18);
  cockpit.visible=false;
 }
 function updateCockpit3D(){if(!CK.thr)return;const pl=CK.pl,pd=PANEL.ped;
@@ -742,7 +742,7 @@ function heading(){_f.set(0,0,-1).applyQuaternion(P.q);return (Math.atan2(_f.x,-
 function localToWorld(v){return v.clone().applyQuaternion(P.q).add(P.pos);}
 const qHold={};
 function step(h){const s=SPEC;simT+=h;
- let ip=joyCurve(joyV.y),ir=joyCurve(joyV.x),iy=P.rud;
+ let ip=joyCurve(-joyV.y),ir=joyCurve(joyV.x),iy=P.rud;
  if(keys.KeyS||keys.ArrowDown)ip+=1;if(keys.KeyW||keys.ArrowUp)ip-=1;if(keys.KeyA||keys.ArrowLeft)ir-=1;if(keys.KeyD||keys.ArrowRight)ir+=1;if(keys.KeyQ)iy-=1;if(keys.KeyE)iy+=1;
  if(keys.ShiftLeft||keys.ShiftRight)P.throttle=Math.min(1,P.throttle+0.4*h);if(keys.ControlLeft||keys.ControlRight)P.throttle=Math.max(0,P.throttle-0.4*h);
  if(keys.KeyT||qHold.trimUp)trimMove(1,h);if(keys.KeyY||qHold.trimDn)trimMove(-1,h);
